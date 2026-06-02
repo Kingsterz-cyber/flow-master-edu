@@ -141,8 +141,7 @@ export function Sidebar({ role }: { role: Role }) {
                 </div>
                 <ul className="space-y-0.5">
                   {group.items.map((item, i) => {
-                    const isActive = i === 0 && group.label === Object.values({Overview:1,Today:1,Me:1}) ? false : false;
-                    const active = i === 0 && (group === groups[0]);
+                    const active = i === 0 && groups.indexOf(group) === 0;
                     return (
                       <li key={item.label}>
                         <Link
