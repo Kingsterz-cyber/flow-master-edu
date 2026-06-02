@@ -1,29 +1,51 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Navbar } from "@/components/eduflow/Navbar";
+import { Hero } from "@/components/eduflow/Hero";
+import { Stats } from "@/components/eduflow/Stats";
+import { Features } from "@/components/eduflow/Features";
+import { DashboardShowcase } from "@/components/eduflow/DashboardShowcase";
+import { Analytics } from "@/components/eduflow/Analytics";
+import { Roles } from "@/components/eduflow/Roles";
+import { HowItWorks } from "@/components/eduflow/HowItWorks";
+import { Testimonials } from "@/components/eduflow/Testimonials";
+import { FAQ } from "@/components/eduflow/FAQ";
+import { CTA } from "@/components/eduflow/CTA";
+import { Footer } from "@/components/eduflow/Footer";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "EduFlow — Intelligent School Management Platform" },
+      { name: "description", content: "Manage students, teachers, attendance, marks, reports, and real-time analytics from one powerful platform built for modern schools." },
+      { property: "og:title", content: "EduFlow — Intelligent School Management Platform" },
+      { property: "og:description", content: "Manage students, teachers, attendance, marks, reports, and real-time analytics from one powerful platform built for modern schools." },
+    ],
+    links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background text-ink">
+      <Navbar />
+      <main>
+        <Hero />
+        <Stats />
+        <Features />
+        <DashboardShowcase />
+        <Analytics />
+        <Roles />
+        <HowItWorks />
+        <Testimonials />
+        <FAQ />
+        <CTA />
+      </main>
+      <Footer />
     </div>
   );
 }
