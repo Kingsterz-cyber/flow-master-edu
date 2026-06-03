@@ -11,14 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as DashboardTeacherRouteImport } from './routes/dashboard.teacher'
 import { Route as DashboardStudentRouteImport } from './routes/dashboard.student'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
-import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
-import { Route as AuthCreateSchoolRouteImport } from './routes/auth.create-school'
 import { Route as AuthJoinSchoolRouteImport } from './routes/auth.join-school'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthCreateSchoolRouteImport } from './routes/auth.create-school'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardTeacherRoute = DashboardTeacherRouteImport.update({
@@ -45,19 +50,9 @@ const DashboardAdminRoute = DashboardAdminRouteImport.update({
   path: '/dashboard/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/auth/',
-  path: '/auth/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthCreateSchoolRoute = AuthCreateSchoolRouteImport.update({
-  id: '/auth/create-school',
-  path: '/auth/create-school',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthJoinSchoolRoute = AuthJoinSchoolRouteImport.update({
@@ -70,6 +65,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCreateSchoolRoute = AuthCreateSchoolRouteImport.update({
+  id: '/auth/create-school',
+  path: '/auth/create-school',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -77,10 +77,10 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/join-school': typeof AuthJoinSchoolRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/': typeof AuthIndexRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/student': typeof DashboardStudentRoute
   '/dashboard/teacher': typeof DashboardTeacherRoute
+  '/auth/': typeof AuthIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -89,10 +89,10 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/join-school': typeof AuthJoinSchoolRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth': typeof AuthIndexRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/student': typeof DashboardStudentRoute
   '/dashboard/teacher': typeof DashboardTeacherRoute
+  '/auth': typeof AuthIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -102,10 +102,10 @@ export interface FileRoutesById {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/join-school': typeof AuthJoinSchoolRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/': typeof AuthIndexRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/student': typeof DashboardStudentRoute
   '/dashboard/teacher': typeof DashboardTeacherRoute
+  '/auth/': typeof AuthIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -116,10 +116,10 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/join-school'
     | '/auth/login'
-    | '/auth/'
     | '/dashboard/admin'
     | '/dashboard/student'
     | '/dashboard/teacher'
+    | '/auth/'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -128,10 +128,10 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/join-school'
     | '/auth/login'
-    | '/auth'
     | '/dashboard/admin'
     | '/dashboard/student'
     | '/dashboard/teacher'
+    | '/auth'
     | '/dashboard'
   id:
     | '__root__'
@@ -140,10 +140,10 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/join-school'
     | '/auth/login'
-    | '/auth/'
     | '/dashboard/admin'
     | '/dashboard/student'
     | '/dashboard/teacher'
+    | '/auth/'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -153,10 +153,10 @@ export interface RootRouteChildren {
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthJoinSchoolRoute: typeof AuthJoinSchoolRoute
   AuthLoginRoute: typeof AuthLoginRoute
-  AuthIndexRoute: typeof AuthIndexRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardStudentRoute: typeof DashboardStudentRoute
   DashboardTeacherRoute: typeof DashboardTeacherRoute
+  AuthIndexRoute: typeof AuthIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -174,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/teacher': {
@@ -197,25 +204,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/': {
-      id: '/auth/'
-      path: '/auth'
-      fullPath: '/auth/'
-      preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/login': {
       id: '/auth/login'
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/create-school': {
-      id: '/auth/create-school'
-      path: '/auth/create-school'
-      fullPath: '/auth/create-school'
-      preLoaderRoute: typeof AuthCreateSchoolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/join-school': {
@@ -232,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/create-school': {
+      id: '/auth/create-school'
+      path: '/auth/create-school'
+      fullPath: '/auth/create-school'
+      preLoaderRoute: typeof AuthCreateSchoolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -241,22 +241,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthJoinSchoolRoute: AuthJoinSchoolRoute,
   AuthLoginRoute: AuthLoginRoute,
-  AuthIndexRoute: AuthIndexRoute,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardStudentRoute: DashboardStudentRoute,
   DashboardTeacherRoute: DashboardTeacherRoute,
+  AuthIndexRoute: AuthIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
