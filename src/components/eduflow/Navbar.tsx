@@ -38,13 +38,13 @@ export function Navbar() {
 
           <div className="flex items-center gap-2">
             <Link
-              to="/dashboard"
+              to="/auth/login"
               className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:text-ink sm:inline-flex"
             >
-              Dashboard
+              Log in
             </Link>
             <Link
-              to="/dashboard"
+              to="/auth"
               className="inline-flex items-center rounded-lg bg-ink px-3.5 py-2 text-sm font-medium text-background shadow-soft transition hover:opacity-90"
             >
               Get Started
