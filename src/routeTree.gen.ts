@@ -14,6 +14,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as DashboardTeacherRouteImport } from './routes/dashboard.teacher'
 import { Route as DashboardStudentRouteImport } from './routes/dashboard.student'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard.analytics'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthJoinSchoolRouteImport } from './routes/auth.join-school'
@@ -43,6 +44,11 @@ const DashboardTeacherRoute = DashboardTeacherRouteImport.update({
 const DashboardStudentRoute = DashboardStudentRouteImport.update({
   id: '/dashboard/student',
   path: '/dashboard/student',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
+  id: '/dashboard/analytics',
+  path: '/dashboard/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAdminRoute = DashboardAdminRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/auth/join-school': typeof AuthJoinSchoolRoute
   '/auth/login': typeof AuthLoginRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/student': typeof DashboardStudentRoute
   '/dashboard/teacher': typeof DashboardTeacherRoute
   '/auth/': typeof AuthIndexRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/auth/join-school': typeof AuthJoinSchoolRoute
   '/auth/login': typeof AuthLoginRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/student': typeof DashboardStudentRoute
   '/dashboard/teacher': typeof DashboardTeacherRoute
   '/auth': typeof AuthIndexRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/auth/join-school': typeof AuthJoinSchoolRoute
   '/auth/login': typeof AuthLoginRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/student': typeof DashboardStudentRoute
   '/dashboard/teacher': typeof DashboardTeacherRoute
   '/auth/': typeof AuthIndexRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/auth/join-school'
     | '/auth/login'
     | '/dashboard/admin'
+    | '/dashboard/analytics'
     | '/dashboard/student'
     | '/dashboard/teacher'
     | '/auth/'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/auth/join-school'
     | '/auth/login'
     | '/dashboard/admin'
+    | '/dashboard/analytics'
     | '/dashboard/student'
     | '/dashboard/teacher'
     | '/auth'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/auth/join-school'
     | '/auth/login'
     | '/dashboard/admin'
+    | '/dashboard/analytics'
     | '/dashboard/student'
     | '/dashboard/teacher'
     | '/auth/'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   AuthJoinSchoolRoute: typeof AuthJoinSchoolRoute
   AuthLoginRoute: typeof AuthLoginRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardStudentRoute: typeof DashboardStudentRoute
   DashboardTeacherRoute: typeof DashboardTeacherRoute
   AuthIndexRoute: typeof AuthIndexRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard/student'
       fullPath: '/dashboard/student'
       preLoaderRoute: typeof DashboardStudentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/dashboard/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/admin': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthJoinSchoolRoute: AuthJoinSchoolRoute,
   AuthLoginRoute: AuthLoginRoute,
   DashboardAdminRoute: DashboardAdminRoute,
+  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardStudentRoute: DashboardStudentRoute,
   DashboardTeacherRoute: DashboardTeacherRoute,
   AuthIndexRoute: AuthIndexRoute,

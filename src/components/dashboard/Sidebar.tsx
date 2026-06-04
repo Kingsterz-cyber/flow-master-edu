@@ -1,9 +1,11 @@
+"use client";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, CalendarCheck, ClipboardList,
   BarChart3, FileText, Bell, Settings, LifeBuoy, School, ChevronDown, Sparkles,
   Calendar, Trophy, TrendingUp, NotebookPen, ListChecks, FileBarChart, BookMarked,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 type Role = "admin" | "teacher" | "student";
@@ -14,7 +16,7 @@ const NAV: Record<Role, { label: string; items: { to: string; icon: any; label: 
       label: "Overview",
       items: [
         { to: "/dashboard/admin", icon: LayoutDashboard, label: "Dashboard" },
-        { to: "/dashboard/admin", icon: BarChart3, label: "Analytics" },
+        { to: "/dashboard/analytics", icon: BarChart3, label: "Analytics" },
       ],
     },
     {
@@ -141,21 +143,29 @@ export function Sidebar({ role }: { role: Role }) {
                 </div>
                 <ul className="space-y-0.5">
                   {group.items.map((item, i) => {
-                    const active = i === 0 && groups.indexOf(group) === 0;
+                    const active = path === item.to || (i === 0 && groups.indexOf(group) === 0 && path === item.to);
                     return (
                       <li key={item.label}>
                         <Link
                           to={item.to}
-                          className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[12.5px] transition ${
+                          className={`group relative flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[12.5px] transition ${
                             active
-                              ? "bg-primary/10 font-medium text-primary"
+                              ? "font-medium text-primary"
                               : "text-ink-muted hover:bg-surface hover:text-ink"
                           }`}
                         >
-                          <item.icon className={`h-4 w-4 ${active ? "text-primary" : "text-ink-muted group-hover:text-ink"}`} />
-                          <span className="flex-1">{item.label}</span>
+                          {active && (
+                            <motion.span
+                              layoutId="sidebar-active"
+                              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                              className="absolute inset-0 rounded-lg bg-primary/10"
+                              aria-hidden
+                            />
+                          )}
+                          <item.icon className={`relative h-4 w-4 ${active ? "text-primary" : "text-ink-muted group-hover:text-ink"}`} />
+                          <span className="relative flex-1">{item.label}</span>
                           {item.badge && (
-                            <span className="rounded-md bg-ink/5 px-1.5 py-0.5 text-[9.5px] font-medium text-ink-muted">
+                            <span className="relative rounded-md bg-ink/5 px-1.5 py-0.5 text-[9.5px] font-medium text-ink-muted">
                               {item.badge}
                             </span>
                           )}

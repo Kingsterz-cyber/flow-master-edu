@@ -1,4 +1,7 @@
+"use client";
 import { Users, UserCog, CalendarCheck, ClipboardList, FileBarChart, LineChart, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ease } from "@/components/motion/primitives";
 
 export function Features() {
   return (
@@ -141,17 +144,36 @@ function Card({
   icon: Icon, title, desc, children, className = "",
 }: { icon: any; title: string; desc: string; children?: React.ReactNode; className?: string }) {
   return (
-    <div className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-soft transition hover:shadow-float ${className}`}>
-      <div className="flex items-start gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-violet/15 text-primary">
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.7, ease }}
+      whileHover={{ y: -4 }}
+      className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-soft transition-shadow duration-500 hover:shadow-float ${className}`}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -inset-px rounded-[inherit] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(60% 50% at 30% 0%, oklch(0.92 0.09 275 / 0.55), transparent 65%)",
+        }}
+      />
+      <div className="relative flex items-start gap-3">
+        <motion.div
+          whileHover={{ rotate: -6, scale: 1.08 }}
+          transition={{ type: "spring", stiffness: 260, damping: 18 }}
+          className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-violet/15 text-primary"
+        >
           <Icon className="h-5 w-5" />
-        </div>
+        </motion.div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold tracking-tight text-ink">{title}</h3>
           <p className="mt-1 text-sm text-ink-muted">{desc}</p>
         </div>
       </div>
-      {children}
-    </div>
+      <div className="relative">{children}</div>
+    </motion.div>
   );
 }
