@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ease } from "@/components/motion/primitives";
-import { DashboardPreview } from "./DashboardPreview";
-import { AdminDashboard } from "./AdminDashboard";
-import { DOSDashboard } from "./DOSDashboard";
-import { TeacherDashboard } from "./TeacherDashboard";
-import { StudentDashboard } from "./StudentDashboard";
+import { DashboardPreview } from "@/components/dashboard/DashboardPreview";
+import { AdminDashboard } from "@/components/dashboard/AdminDashboard";
+import { DOSDashboard } from "@/components/dashboard/DOSDashboard";
+import { TeacherDashboard } from "@/components/dashboard/TeacherDashboard";
+import { StudentDashboard } from "@/components/dashboard/StudentDashboard";
 import { Link } from "@tanstack/react-router";
 import { Shield, BarChart3, GraduationCap, BookOpen, ArrowUpRight } from "lucide-react";
 
