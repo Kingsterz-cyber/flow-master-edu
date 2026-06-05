@@ -5,9 +5,12 @@ import {
   Circle, Clock, AlertTriangle, ArrowUpRight, Plus, ChevronRight, Sparkles,
 } from "lucide-react";
 
-export function TeacherDashboard() {
+export function TeacherDashboard({ embed = false }: { embed?: boolean } = {}) {
+  const Wrap = embed
+    ? ({ children }: { children: any }) => <div className="p-4 sm:p-6">{children}</div>
+    : ({ children }: { children: any }) => <DashboardLayout role="teacher">{children}</DashboardLayout>;
   return (
-    <DashboardLayout role="teacher">
+    <Wrap>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="text-[11px] font-medium uppercase tracking-wider text-primary">Monday · Period 2 starts in 14m</div>
@@ -211,6 +214,6 @@ export function TeacherDashboard() {
           </Panel>
         </div>
       </div>
-    </DashboardLayout>
+    </Wrap>
   );
 }
