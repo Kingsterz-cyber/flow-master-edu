@@ -6,9 +6,12 @@ import {
   NotebookPen, Bell, Sparkles, ChevronRight, CheckCircle2,
 } from "lucide-react";
 
-export function AdminDashboard() {
+export function AdminDashboard({ embed = false }: { embed?: boolean } = {}) {
+  const Wrap = embed
+    ? ({ children }: { children: any }) => <div className="p-4 sm:p-6">{children}</div>
+    : ({ children }: { children: any }) => <DashboardLayout role="admin">{children}</DashboardLayout>;
   return (
-    <DashboardLayout role="admin">
+    <Wrap>
       {/* Hero greeting */}
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -329,6 +332,6 @@ export function AdminDashboard() {
           </Panel>
         </div>
       </div>
-    </DashboardLayout>
+    </Wrap>
   );
 }

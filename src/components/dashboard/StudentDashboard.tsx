@@ -5,9 +5,12 @@ import {
   TrendingUp, TrendingDown, Sparkles, ChevronRight, Clock,
 } from "lucide-react";
 
-export function StudentDashboard() {
+export function StudentDashboard({ embed = false }: { embed?: boolean } = {}) {
+  const Wrap = embed
+    ? ({ children }: { children: any }) => <div className="p-4 sm:p-6">{children}</div>
+    : ({ children }: { children: any }) => <DashboardLayout role="student">{children}</DashboardLayout>;
   return (
-    <DashboardLayout role="student">
+    <Wrap>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="text-[11px] font-medium uppercase tracking-wider text-primary">Term 2 · Week 9</div>
@@ -243,6 +246,6 @@ export function StudentDashboard() {
           </Panel>
         </div>
       </div>
-    </DashboardLayout>
+    </Wrap>
   );
 }

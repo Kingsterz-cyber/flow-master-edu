@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 
-type Role = "admin" | "teacher" | "student";
+export type Role = "admin" | "dos" | "teacher" | "student";
 
 export function DashboardLayout({ role, children }: { role: Role; children: ReactNode }) {
   return (

@@ -1,6 +1,7 @@
 import { GraduationCap, Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const links = [
   { label: "Features", href: "#features" },
@@ -18,7 +19,7 @@ export function Navbar() {
         <nav className="glass flex items-center justify-between rounded-2xl px-4 py-2.5 shadow-soft">
           <a href="#" className="flex items-center gap-2">
             <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground shadow-soft">
-              <GraduationCap className="h-4.5 w-4.5" strokeWidth={2.25} />
+              <GraduationCap className="h-4 w-4" strokeWidth={2.25} />
             </div>
             <span className="text-[15px] font-semibold tracking-tight text-ink">EduFlow</span>
           </a>
@@ -26,10 +27,7 @@ export function Navbar() {
           <ul className="hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <li key={l.label}>
-                <a
-                  href={l.href}
-                  className="rounded-md px-3 py-1.5 text-sm text-ink-muted transition hover:bg-surface hover:text-ink"
-                >
+                <a href={l.href} className="rounded-md px-3 py-1.5 text-sm text-ink-muted transition hover:bg-surface hover:text-ink">
                   {l.label}
                 </a>
               </li>
@@ -37,6 +35,13 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link
+              to="/dashboard"
+              className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:text-ink sm:inline-flex"
+            >
+              Dashboard
+            </Link>
             <Link
               to="/auth/login"
               className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-ink-muted transition hover:text-ink sm:inline-flex"
