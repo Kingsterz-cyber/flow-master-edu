@@ -43,7 +43,7 @@ function MarksPage() {
         <KPIWidget icon={NotebookPen} label="Submitted (term)" value={186} suffix="/210" delta="+24" tint="primary" index={0} />
         <KPIWidget icon={Award} label="Avg score" value={87.2} decimals={1} delta="+3.1" tint="emerald" index={1} />
         <KPIWidget icon={ClipboardList} label="Pending review" value={18} tint="amber" index={2} />
-        <KPIWidget icon={AlertTriangle} label="Missing", value={4} trend="down" tint="violet" index={3} />
+        <KPIWidget icon={AlertTriangle} label="Missing" value={4} trend="down" tint="violet" index={3} />
       </div>
 
       <div className="mt-6 grid grid-cols-12 gap-4">

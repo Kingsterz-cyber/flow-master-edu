@@ -44,7 +44,7 @@ function AttendancePage() {
         <KPIWidget icon={CalendarCheck} label="Today's attendance" value={96.4} suffix="%" decimals={1} delta="+1.2%" tint="emerald" index={0} />
         <KPIWidget icon={Users} label="Checked in" value={5056} suffix="/5248" delta="+128" tint="primary" index={1} />
         <KPIWidget icon={AlertTriangle} label="Absent" value={192} delta="−24" trend="down" tint="amber" index={2} />
-        <KPIWidget icon={TrendingUp} label="Weekly trend" value={2.1} suffix="%" decimals={1} delta="+", tint="violet" index={3} />
+        <KPIWidget icon={TrendingUp} label="Weekly trend" value={2.1} suffix="%" decimals={1} delta="+0.4%" tint="violet" index={3} />
       </div>
 
       <div className="mt-6 grid grid-cols-12 gap-4">
