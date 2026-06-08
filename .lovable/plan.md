@@ -1,79 +1,74 @@
-# EduFlow — Complete Module Buildout
+This is a very large backend build. The current EduFlow app is UI-only (mock data, no auth, no DB). Turning it into a production multi-school SaaS with auth, RLS, CRUD, realtime, reports, and analytics — across 4 roles and ~30 modules — is genuinely several days of work. I want to do it right, not stub it. Here's the proposed sequencing. Each phase ends in a working app; I won't move to the next without your go-ahead.
 
-Goal: every sidebar item across all 4 roles opens a **fully designed working module** (KPIs, filters, search, tables, charts, drill-downs, empty/loading states), styled to match the uploaded moodboards (Linear/Stripe/Vercel/Notion/Framer/Raycast feel, both light + dark).
+## What stays the same
+The entire visual layer: theme tokens, dark mode, sidebar, topbar, widgets (`KPIWidget`, `HeatmapWidget`, `DashboardChart`, `RankingTable`), motion primitives, landing page, auth screens. I'll wire these to real data — not redesign them.
 
-Current state: foundations, theme, widget library, role architecture, DOS dashboard, and `ModulePage` scaffold all exist. Several routes still use a thin `ModulePage` shell — they look polished but read as "lists" rather than full apps. The four role dashboards exist but vary in depth.
+## Phase 0 — Enable Lovable Cloud + schema foundation
+- Enable Lovable Cloud (Supabase).
+- Migrations for the full multi-school schema with `school_id` on every tenant table + RLS:
+  - `schools`, `school_members` (role per user per school), `user_roles` (app_role enum: `director`, `dos`, `teacher`, `student`)
+  - `academic_categories` → `academic_levels` → `classes` (user-defined, not hardcoded O/A-Level)
+  - `departments`, `subjects`, `subject_teachers` (teacher↔subject↔class), `class_teachers`
+  - `registration_codes` (school-level TCH-/STD-), `enrollment_codes` (class-level S2A-001)
+  - `students` (full profile: personal, contact, home, guardian), `teachers`
+  - `assessments`, `marks`, `attendance`
+  - `announcements`, `approvals`, `audit_logs`, `notifications`
+  - `academic_years`, `terms`, `grading_bands`
+- `has_role()` security-definer function; `is_school_member(school_id, role)` helper.
+- RLS: every select/insert/update scoped to `school_id` via membership; no cross-school leakage.
+- GRANTs on every public table per platform rules.
 
----
+## Phase 1 — Auth & onboarding (real)
+- Real Supabase email/password auth wired into existing `/auth/*` screens (no redesign).
+- Director signup → creates `schools` row, auto-generates `TCH-XXXX` and `STD-XXXX` codes, makes director account active.
+- Teacher signup → school + TCH code + class-teacher question → pending approval.
+- Student signup → school + STD code + enrollment code (S2A-001) → auto-assigned to class → pending approval.
+- `/auth/_authenticated` gate + role-based dashboard redirect (`/dashboard/director`, `/dos`, `/teacher`, `/student`).
 
-## Phase 1 — Design system tighten (foundation)
-- Audit `src/styles.css` tokens: ensure parity between light/dark for `--surface`, `--border`, `--ink-muted`, plus a softer elevated card surface used in the moodboard (`--card-elevated`).
-- Standardize shared primitives in `src/components/dashboard/primitives.tsx`:
-  - `PageHeader` (eyebrow + title + description + actions)
-  - `Toolbar` (search input + filter chips + view switch + export)
-  - `DataTable` (sticky header, hover row, status pill column, row actions menu, pagination footer)
-  - `EmptyState`, `LoadingSkeleton`, `Tabs` (segmented control), `Drawer` (right-side details panel)
-- Add `KPIRow` helper that renders 4–6 KPIs consistently across modules.
+## Phase 2 — Director modules (real CRUD)
+- School Settings: branding, academic-year, grading bands, rotate registration codes.
+- Academic Structure Builder: create categories → levels → classes → streams (user-defined).
+- Departments & Subjects CRUD.
+- Staff list (real teachers), Students list, Approvals queue (approve/reject pending teachers & students), Announcements, Reports (read-only aggregates).
+- Director dashboard KPIs from real counts/aggregates.
 
-## Phase 2 — School Director (Admin) modules
-- **Dashboard** (already): polish KPIs, add Quick Actions strip + School Growth area chart + Activity feed.
-- **Staff**: tabs (DOS / Teachers / All), search, dept filter, table (avatar, name, role, dept, classes, last active, status), row drawer with assign-department & activate/deactivate.
-- **Students**: hierarchical tree (Students → O-Level/A-Level → S1–S6 → streams A/B/C). Clicking a class shows class KPIs (count, attendance, avg, class teacher) + student table with actions (View, Edit, Transfer, Generate Report).
-- **Approvals**: tabs (Pending Teachers / Pending Students), bulk select, approve/reject, side drawer with full registration details.
-- **Reports**: report builder (type: Student/Class/Subject/School + year/term/class/subject filters) + recent generated reports table with download.
-- **Announcements**: composer (title, body, audience targeting: All / Teachers / Students / Specific Class) + list of published/scheduled/drafts with engagement (open rate, recipients).
-- **School Settings**: tabs for Branding (logo upload, colors), School Codes, Academic Years (CRUD), Grading System (band editor: A: 80–100, etc.).
+## Phase 3 — Class Teacher + Enrollment Codes
+- "My Class" sidebar section appears only when `class_teachers.user_id = auth.uid()`.
+- Generate enrollment codes (S2A-001…), track Unused / Used / Pending.
+- Class roster auto-sorted alphabetically, with search/filter/pagination.
 
-## Phase 3 — DOS modules
-- **Dashboard** (already polished): keep, ensure heatmap + rankings + AI insights.
-- **Academic Analytics** (exists): expand with grade distribution histogram + teacher activity ranking.
-- **Classes**: O-Level/A-Level tree; selecting a class opens tabbed workspace (Overview / Students / Attendance / Marks / Reports / Analytics).
-- **Subjects**: grouped by department (Sciences, Languages, Humanities, ICT, Business, Arts) as collapsible sections; each subject row expands to teachers/classes/avg score/trend sparkline.
-- **Attendance** (exists): keep, add daily/weekly/monthly tabs and class rankings panel.
-- **Marks**: marks-entry table (class × students × assessments) + review tab + performance analysis (subject comparison bar, grade distribution donut).
-- **Reports**: shared with admin component, scoped to academic reports.
-- **Teacher Performance**: table (teacher, classes, attendance-submission %, marks-submission %, activity score, trend), with filter by department.
+## Phase 4 — Teacher workspace + Assessments + Marks + Attendance
+- "My Teaching Classes" = cards from `subject_teachers` (Subject + Class).
+- Class Workspace tabs: Overview / Students / Attendance / Assessments / Marks / Reports / Analytics.
+- Assessments CRUD (CAT, Quiz, Practical, Exam, custom; name, total marks, term, weight).
+- Marks entry grid → writes to `marks` with teacher_id+subject_id+class_id+assessment_id; auto totals/grade/rank.
+- Attendance daily entry (Present/Absent/Late) → writes to `attendance`.
 
-## Phase 4 — Teacher modules
-- **Dashboard**: today's classes timeline, KPIs (assigned classes/subjects, attendance submitted, marks submitted), pending assessments, recent student activity, quick actions.
-- **My Classes**: class cards grid → click opens workspace with tabs (Overview / Students / Attendance / Assessments / Marks / Reports / Analytics).
-- **Attendance**: record-attendance grid (student rows × Present/Absent/Late toggles), edit history.
-- **Marks**: create assessment (CAT / Quiz / Assignment / Exam), then score-entry table auto-computing Total/Avg/Grade per row.
-- **Students**: roster across assigned classes, filter by class.
-- **Announcements**: lightweight composer scoped to teacher's classes.
+## Phase 5 — DOS dashboard (real analytics)
+- All KPIs computed via SQL views / server functions: attendance rate, pass rate, class rankings, subject rankings, students-at-risk (low attendance + declining grades), teacher activity, grade distribution.
+- Heatmap from real attendance + marks submission events.
 
-## Phase 5 — Student modules
-- **Dashboard**: KPIs (attendance %, avg grade, class rank, recent results), progress chart, upcoming assessments, announcements.
-- **My Subjects**: subject cards with teacher, latest grade, trend; click → subject detail (teacher info + assessment history table CAT1/CAT2/Exam/Total/Grade).
-- **My Attendance**: attendance % big number, monthly trend chart, calendar/heatmap, history table.
-- **My Marks**: results grouped by subject (Mathematics → Teacher: Mr. John → assessments table) + performance trend chart.
-- **Reports**: list of report cards by term with download buttons.
-- **Announcements**: read-only feed.
+## Phase 6 — Student dashboard (own data only)
+- Attendance %, average grade, class rank, recent results, subject performance — all RLS-scoped to `student_id = auth.uid()`.
 
-## Phase 6 — Polish + QA
-- Page transition wrapper (fade/slide on route change) wired into `DashboardLayout`.
-- Verify dark mode on every new module.
-- Ensure each route has loading skeleton + empty state fallbacks.
-- Smoke-test all sidebar links per role; no dead pages.
+## Phase 7 — Reports (PDF)
+- Server function generates Student Report Card / Class Report / Subject Report / School Report as real PDFs (jsPDF or pdf-lib in a server fn). Pulls live marks, attendance, rankings, comments.
 
----
+## Phase 8 — Realtime + Notifications + Audit + Polish
+- Supabase Realtime subscriptions on `marks`, `attendance`, `approvals`, `announcements` → live dashboard updates.
+- Notification center, audit_logs, student transfer, promotion (S1→S2 preserving history).
+- Final routing pass — every sidebar item lands on the correct role's page; no cross-role bleed.
 
 ## Technical notes
-- All new pages live under `src/routes/dashboard.*.tsx` + components under `src/components/dashboard/modules/<role>/`.
-- Reuse `widgets/index.tsx` (`KPIWidget`, `DashboardChart`, `HeatmapWidget`, `RankingTable`).
-- New shared building blocks: `DataTable`, `Toolbar`, `Drawer`, `Tree`, `Tabs`, `PageHeader` in `primitives.tsx`.
-- Mock data colocated under `src/data/` (typed) to keep components clean and make later API swap trivial.
-- Framer Motion only for: sidebar active-pill (existing), KPI count-up (existing), chart path-draw (existing), table row fade-in stagger, drawer slide.
+- Stack: TanStack Start + Supabase via Lovable Cloud. Server functions (`createServerFn` + `requireSupabaseAuth`) for all writes/aggregates; `supabaseAdmin` only for verified server-side flows. No edge functions unless required by a webhook.
+- RLS is the security boundary — no client-side role checks for data access.
+- Existing mock-data files (`src/data/*`, hardcoded arrays in module pages) get replaced with `useQuery` against server functions; component shells stay.
+- I'll likely add: `jspdf` (or `pdf-lib`) for reports, `date-fns` (already in), `@tanstack/react-table` for searchable/sortable tables.
 
----
+## What I need from you before I start
 
-## Execution order
-This is large. I'll execute in this order in subsequent turns:
-1. Phase 1 (primitives + tokens) — single pass.
-2. Phase 2 (Director modules) — biggest user-visible win.
-3. Phase 3 (DOS) — fills the analytical core.
-4. Phase 4 (Teacher) — workflow-heavy.
-5. Phase 5 (Student) — motivational portal.
-6. Phase 6 (polish).
+1. **Confirm scope & sequencing.** This is ~8 phases. Do you want me to execute all of them in order, stopping after each for review? Or batch (e.g., Phases 0–2 first, then 3–5, then 6–8)?
+2. **First action.** Phase 0 requires enabling Lovable Cloud (creates the database). OK to enable now?
+3. **Anything to defer?** Reports PDFs (Phase 7), audit logs, promotion, and transfer are nice-to-have. Confirm if any of these can ship later.
 
-**Reply "go" to execute all phases, or name the phase(s) you want first** (e.g. "phase 1 + 2 only").
+Reply with: "Go phases 0–2" (or similar) and I'll start.
